@@ -1,0 +1,11 @@
+@import 'tailwindcss';
+@import 'flowbite/src/themes/default';
+/* @import '@fontsource-variable/instrument-sans'; */
+@import '@fontsource-variable/manrope';
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+
+@theme {
+    --font-sans: 'Manrope Variable';
+}
