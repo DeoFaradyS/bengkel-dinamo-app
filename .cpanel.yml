@@ -1,0 +1,6 @@
+---
+deployment:
+  tasks:
+    - /bin/cp -R public/. /home/benp4461/public_html/
+    - /bin/sed -i "s#__DIR__.'/../vendor/autoload.php'#'/home/benp4461/repositories/bengkel-dinamo/vendor/autoload.php'#" /home/benp4461/public_html/index.php
+    - /bin/sed -i "s#__DIR__.'/../bootstrap/app.php'#'/home/benp4461/repositories/bengkel-dinamo/bootstrap/app.php'#" /home/benp4461/public_html/index.php
