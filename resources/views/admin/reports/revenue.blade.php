@@ -66,8 +66,8 @@
                 @endphp
                 <tr>
                     <x-table.cell>{{ $loop->iteration }}</x-table.cell>
-                    <x-table.cell>{{ $booking->user->name }}</x-table.cell>
-                    <x-table.cell>{{ $booking->vehicle->brand }} {{ $booking->vehicle->model }}</x-table.cell>
+                    <x-table.cell>{{ $booking->customer_name }}</x-table.cell>
+                    <x-table.cell>{{ $booking->vehicle?->vehicle_model }} - {{ $booking->vehicle?->license_plate ?? '-' }}</x-table.cell>
                     <x-table.cell>{{ $booking->scheduled_at->format('d M Y') }}</x-table.cell>
                     <x-table.cell>Rp {{ number_format($servicesTotal, 0, ',', '.') }}</x-table.cell>
                     <x-table.cell>Rp {{ number_format($sparePartsTotal, 0, ',', '.') }}</x-table.cell>

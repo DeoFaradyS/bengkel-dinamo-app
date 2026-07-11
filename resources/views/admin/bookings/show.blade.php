@@ -10,45 +10,60 @@
     </div>
 
     <div class="grid grid-cols-2 gap-6">
-        {{-- Customer & Vehicle Info --}}
+        {{-- Customer Info --}}
         <x-card class="flex flex-col gap-4">
             <p class="text-sm font-semibold text-heading">Customer Info</p>
             <div class="space-y-2 text-sm">
                 <div class="flex justify-between">
                     <span class="text-body-subtle">Name</span>
-                    <span class="text-heading font-medium">{{ $booking->user->name }}</span>
-                </div>
-                <div class="flex justify-between">
-                    <span class="text-body-subtle">Email</span>
-                    <span class="text-heading font-medium">{{ $booking->user->email }}</span>
+                    <span class="text-heading font-medium">{{ $booking->customer_name }}</span>
                 </div>
                 <div class="flex justify-between">
                     <span class="text-body-subtle">Phone</span>
-                    <span class="text-heading font-medium">{{ $booking->user->phone_number ?? '-' }}</span>
+                    <span class="text-heading font-medium">{{ $booking->customer_phone }}</span>
                 </div>
+                <div class="flex justify-between">
+                    <span class="text-body-subtle">Service Type</span>
+                    <span class="text-heading font-medium">{{ ucfirst(str_replace('_', ' ', $booking->service_type)) }}</span>
+                </div>
+                @if($booking->service_type === 'home_service')
+                    <div class="flex justify-between">
+                        <span class="text-body-subtle">Address</span>
+                        <span class="text-heading font-medium">{{ $booking->customer_address }}</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-body-subtle">Distance</span>
+                        <span class="text-heading font-medium">{{ $booking->distance_km }} km</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-body-subtle">Home Service Fee</span>
+                        <span class="text-heading font-medium">Rp {{ number_format($booking->home_service_fee, 0, ',', '.') }}</span>
+                    </div>
+                @endif
             </div>
         </x-card>
 
+        {{-- Vehicle Info --}}
         <x-card class="flex flex-col gap-4">
             <p class="text-sm font-semibold text-heading">Vehicle Info</p>
-            <div class="space-y-2 text-sm">
-                <div class="flex justify-between">
-                    <span class="text-body-subtle">Brand</span>
-                    <span class="text-heading font-medium">{{ $booking->vehicle->brand }}</span>
+            @if($booking->vehicle)
+                <div class="space-y-2 text-sm">
+                    <div class="flex justify-between">
+                        <span class="text-body-subtle">Model</span>
+                        <span class="text-heading font-medium">{{ $booking->vehicle->vehicle_model }}</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-body-subtle">Year</span>
+                        <span class="text-heading font-medium">{{ $booking->vehicle->year }}</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-body-subtle">License Plate</span>
+                        <span class="text-heading font-medium">{{ $booking->vehicle->license_plate }}</span>
+                    </div>
                 </div>
-                <div class="flex justify-between">
-                    <span class="text-body-subtle">Model</span>
-                    <span class="text-heading font-medium">{{ $booking->vehicle->model }}</span>
-                </div>
-                <div class="flex justify-between">
-                    <span class="text-body-subtle">Year</span>
-                    <span class="text-heading font-medium">{{ $booking->vehicle->year }}</span>
-                </div>
-                <div class="flex justify-between">
-                    <span class="text-body-subtle">License Plate</span>
-                    <span class="text-heading font-medium">{{ $booking->vehicle->license_plate }}</span>
-                </div>
-            </div>
+            @else
+                <p class="text-sm text-body-subtle">Tidak ada data kendaraan.</p>
+            @endif
         </x-card>
     </div>
 
@@ -65,16 +80,24 @@
                     <span class="text-body-subtle">Status</span>
                     @php
                         $variants = [
-                            'scheduled'   => 'warning',
+                            'pending'     => 'warning',
+                            'approved'    => 'brand',
                             'in_progress' => 'brand',
                             'done'        => 'success',
-                            'cancelled'   => 'danger',
+                            'cancelled'   => 'gray',
+                            'rejected'    => 'danger',
                         ];
                     @endphp
                     <x-badge variant="{{ $variants[$booking->status] ?? 'gray' }}">
                         {{ ucfirst(str_replace('_', ' ', $booking->status)) }}
                     </x-badge>
                 </div>
+                @if($booking->status === 'rejected' && $booking->rejection_reason)
+                    <div class="flex flex-col gap-1">
+                        <span class="text-body-subtle">Rejection Reason</span>
+                        <span class="text-heading">{{ $booking->rejection_reason }}</span>
+                    </div>
+                @endif
                 @if($booking->complaint)
                     <div class="flex flex-col gap-1">
                         <span class="text-body-subtle">Complaint</span>
@@ -83,14 +106,30 @@
                 @endif
             </div>
 
-            {{-- Update Status --}}
-            @if(!in_array($booking->status, ['done', 'cancelled']))
+            {{-- Approve / Reject (pending only) --}}
+            @if($booking->status === 'pending')
+                <div class="flex items-center gap-3 pt-2 border-t border-default">
+                    <form action="{{ route('admin.bookings.approve', $booking) }}" method="POST">
+                        @csrf
+                        <x-button type="submit">Approve</x-button>
+                    </form>
+                    <form action="{{ route('admin.bookings.reject', $booking) }}" method="POST" class="flex items-center gap-2">
+                        @csrf
+                        <input type="text" name="rejection_reason" placeholder="Alasan reject" required
+                            class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand px-3 py-2 shadow-xs">
+                        <x-button type="submit" variant="tertiary">Reject</x-button>
+                    </form>
+                </div>
+            @endif
+
+            {{-- Update Status (approved onward) --}}
+            @if(!in_array($booking->status, ['pending', 'done', 'cancelled', 'rejected']))
                 <form action="{{ route('admin.bookings.update', $booking) }}" method="POST" class="flex items-center gap-3 pt-2 border-t border-default">
                     @csrf
                     @method('PUT')
                     <select name="status"
                         class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand px-3 py-2 shadow-xs flex-1">
-                        <option value="scheduled" {{ $booking->status === 'scheduled' ? 'selected' : '' }}>Scheduled</option>
+                        <option value="approved" {{ $booking->status === 'approved' ? 'selected' : '' }}>Approved</option>
                         <option value="in_progress" {{ $booking->status === 'in_progress' ? 'selected' : '' }}>In Progress</option>
                         <option value="done" {{ $booking->status === 'done' ? 'selected' : '' }}>Done</option>
                         <option value="cancelled" {{ $booking->status === 'cancelled' ? 'selected' : '' }}>Cancelled</option>
@@ -103,7 +142,7 @@
         {{-- Add Spare Part --}}
         <x-card class="flex flex-col gap-4">
             <p class="text-sm font-semibold text-heading">Add Spare Part</p>
-            @if(!in_array($booking->status, ['done', 'cancelled']))
+            @if(!in_array($booking->status, ['done', 'cancelled', 'rejected']))
                 <form action="{{ route('admin.bookings.update', $booking) }}" method="POST" class="space-y-3">
                     @csrf
                     @method('PUT')

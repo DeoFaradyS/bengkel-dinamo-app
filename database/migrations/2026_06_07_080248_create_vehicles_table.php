@@ -9,12 +9,9 @@ return new class extends Migration {
     {
         Schema::create('vehicles', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->string('license_plate')->unique();
-            $table->string('brand');
-            $table->string('model');
+            $table->string('vehicle_model');
             $table->integer('year');
-            $table->boolean('is_active')->default(true);
             $table->timestamps();
         });
     }

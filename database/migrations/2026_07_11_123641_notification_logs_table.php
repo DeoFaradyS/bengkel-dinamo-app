@@ -7,16 +7,17 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration {
     public function up(): void
     {
-        Schema::create('booking_services', function (Blueprint $table) {
+        Schema::create('notification_logs', function (Blueprint $table) {
             $table->id();
             $table->foreignId('booking_id')->constrained()->onDelete('cascade');
-            $table->foreignId('service_id')->constrained()->onDelete('cascade');
-            $table->decimal('price', 10, 2)->nullable();
+            $table->text('message');
+            $table->enum('status', ['sent', 'failed']);
+            $table->timestamp('sent_at')->nullable();
         });
     }
 
     public function down(): void
     {
-        Schema::dropIfExists('booking_services');
+        Schema::dropIfExists('notification_logs');
     }
 };

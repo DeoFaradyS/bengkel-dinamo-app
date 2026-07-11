@@ -13,30 +13,56 @@ class BookingController extends Controller
 {
     public function index()
     {
-        $bookings = Booking::with(['user', 'vehicle', 'services.service'])->latest()->get();
+        $bookings = Booking::with(['vehicle', 'services.service'])->latest()->get();
 
         $total  = $bookings->count();
         $counts = $bookings->countBy('status');
-        $scheduled   = $counts->get('scheduled', 0);
+        $pending     = $counts->get('pending', 0);
+        $approved    = $counts->get('approved', 0);
         $in_progress = $counts->get('in_progress', 0);
         $done        = $counts->get('done', 0);
 
-        return view('admin.bookings.index', compact('bookings', 'total', 'scheduled', 'in_progress', 'done'));
+        return view('admin.bookings.index', compact('bookings', 'total', 'pending', 'approved', 'in_progress', 'done'));
     }
 
     public function show(Booking $booking)
     {
-        $booking->load(['user', 'vehicle', 'services.service', 'spareParts.sparePartStock.sparePart']);
+        $booking->load(['vehicle', 'services.service', 'spareParts.sparePartStock.sparePart']);
         $sparePartStocks = SparePartStock::with('sparePart')->get();
 
         return view('admin.bookings.show', compact('booking', 'sparePartStocks'));
+    }
+
+    public function approve(Booking $booking)
+    {
+        $booking->update([
+            'status'      => 'approved',
+            'approved_by' => auth()->id(),
+            'approved_at' => now(),
+        ]);
+
+        return back()->with('success', 'Booking disetujui.');
+    }
+
+    public function reject(Request $request, Booking $booking)
+    {
+        $request->validate(['rejection_reason' => 'required|string']);
+
+        $booking->update([
+            'status'           => 'rejected',
+            'approved_by'      => auth()->id(),
+            'approved_at'      => now(),
+            'rejection_reason' => $request->rejection_reason,
+        ]);
+
+        return back()->with('success', 'Booking ditolak.');
     }
 
     public function update(Request $request, Booking $booking)
     {
         if ($request->has('status')) {
             $request->validate([
-                'status' => 'required|in:scheduled,in_progress,done,cancelled',
+                'status' => 'required|in:pending,approved,in_progress,done,cancelled,rejected',
             ]);
 
             $booking->update(['status' => $request->status]);

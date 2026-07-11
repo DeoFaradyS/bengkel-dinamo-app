@@ -5,16 +5,15 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Booking;
 use App\Models\SparePartStock;
-use App\Models\User;
-use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller
 {
     public function index()
     {
         // Stats cards
-        $todayBookings = Booking::whereDate('scheduled_at', today())->count();
-        $totalCustomers = User::where('role', 'customer')->count();
+        $pendingApproval = Booking::where('status', 'pending')->count();
+        $todayBookings   = Booking::whereDate('scheduled_at', today())->count();
+        $totalCustomers  = Booking::distinct('customer_phone')->count('customer_phone');
         $lowStock = SparePartStock::whereColumn('stock', '<=', 'spare_parts.stock_minimum')
             ->join('spare_parts', 'spare_part_stocks.spare_part_id', '=', 'spare_parts.id')
             ->count();
@@ -44,12 +43,13 @@ class DashboardController extends Controller
         });
 
         // Recent bookings
-        $recentBookings = Booking::with(['user', 'vehicle'])
+        $recentBookings = Booking::with('vehicle')
             ->latest()
             ->take(5)
             ->get();
 
         return view('admin.dashboard', compact(
+            'pendingApproval',
             'todayBookings',
             'todayRevenue',
             'totalCustomers',

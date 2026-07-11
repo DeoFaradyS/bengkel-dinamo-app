@@ -14,10 +14,12 @@ class Service extends Model
         'price_min',
         'price_max',
         'estimated_time_minutes',
+        'available_home_service',
         'is_active',
     ];
 
     protected $casts = [
+        'available_home_service' => 'boolean',
         'is_active' => 'boolean',
         'price_min' => 'decimal:2',
         'price_max' => 'decimal:2',

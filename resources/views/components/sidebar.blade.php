@@ -1,10 +1,9 @@
 <aside id="separator-sidebar"
     class="w-60 h-screen sticky shrink-0 top-0 transition-transform -translate-x-full sm:translate-x-0"
     aria-label="Sidebar">
-    <div class="h-full px-4 py-4 overflow-y-auto bg-neutral-primary-soft border-e border-default">
+    <div class="h-full px-4 py-4 overflow-y-auto bg-neutral-primary-soft border-e border-default flex flex-col">
 
-        {{-- Admin Menu --}}
-        @if($role === 'admin')
+        <div class="flex-1">
             <ul class="space-y-2 font-medium">
 
                 {{-- Dashboard --}}
@@ -107,64 +106,23 @@
                     </a>
                 </li>
 
-                <li>
-                    <hr class="my-2 border-default">
-                </li>
-
-
-
-                {{-- Users --}}
-                <li>
-                    <a href="{{ route('admin.users.index') }}"
-                        class="flex items-center px-2 py-1.5 text-sm text-body rounded-base hover:bg-neutral-tertiary hover:text-fg-brand group {{ request()->routeIs('admin.users.*') ? 'bg-neutral-tertiary text-fg-brand' : '' }}">
-                        <svg class="w-5 h-5 shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                            <path stroke="currentColor" stroke-linecap="round" stroke-width="2"
-                                d="M16 19h4a1 1 0 0 0 1-1v-1a3 3 0 0 0-3-3h-2m-2.236-4a3 3 0 1 0 0-4M3 18v-1a3 3 0 0 1 3-3h4a3 3 0 0 1 3 3v1a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1Zm8-10a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
-                        </svg>
-                        <span class="ms-3">Users</span>
-                    </a>
-                </li>
-
             </ul>
-        @endif
+        </div>
 
-        {{-- Customer Menu --}}
-        @if($role === 'customer')
-            <ul class="space-y-0.5 font-medium">
-
-                <li>
-                    <a href="{{ route('customer.vehicles.index') }}"
-                        class="flex items-center px-2 py-1.5 text-sm text-body rounded-base hover:bg-neutral-tertiary hover:text-fg-brand group {{ request()->routeIs('customer.vehicles.*') ? 'bg-neutral-tertiary text-fg-brand' : '' }}">
-                        <svg class="w-5 h-5 shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M3 10h18M6 14h.01M10 14h.01M7 4v4M17 4v4m2-4H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2Z" />
-                        </svg>
-                        <span class="ms-3">My Vehicles</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('customer.bookings.index') }}"
-                        class="flex items-center px-2 py-1.5 text-sm text-body rounded-base hover:bg-neutral-tertiary hover:text-fg-brand group {{ request()->routeIs('customer.bookings.*') ? 'bg-neutral-tertiary text-fg-brand' : '' }}">
-                        <svg class="w-5 h-5 shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M15 4h3a1 1 0 0 1 1 1v15a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1h3m0 3h6m-6 5h6m-6 4h6M10 3v4h4V3h-4Z" />
-                        </svg>
-                        <span class="ms-3">My Bookings</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('customer.profile.edit') }}"
-                        class="flex items-center px-2 py-1.5 text-sm text-body rounded-base hover:bg-neutral-tertiary hover:text-fg-brand group {{ request()->routeIs('customer.profile.*') ? 'bg-neutral-tertiary text-fg-brand' : '' }}">
-                        <svg class="w-5 h-5 shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                            <path stroke="currentColor" stroke-linecap="round" stroke-width="2"
-                                d="M7 17v1a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1v-1a3 3 0 0 0-3-3h-4a3 3 0 0 0-3 3Zm8-9a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
-                        </svg>
-                        <span class="ms-3">Profile</span>
-                    </a>
-                </li>
-
-            </ul>
-        @endif
+        {{-- Logout, pinned bottom --}}
+        <div class="mt-2 pt-2 border-t border-default">
+            <form method="POST" action="{{ route('logout') }}">
+                @csrf
+                <button type="submit"
+                    class="w-full flex items-center px-2 py-1.5 text-sm text-body rounded-base hover:bg-neutral-tertiary hover:text-fg-brand group">
+                    <svg class="w-5 h-5 shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M16 17l5-5-5-5M21 12H9m4 9H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h8" />
+                    </svg>
+                    <span class="ms-3">Log Out</span>
+                </button>
+            </form>
+        </div>
 
     </div>
 </aside>

@@ -2,39 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
-    public function showRegister()
-    {
-        return view('auth.register');
-    }
-
-    public function register(Request $request)
-    {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email',
-            'password' => 'required|min:8|confirmed',
-        ]);
-
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'role' => 'customer',
-        ]);
-
-        Auth::login($user);
-        $request->session()->regenerate();
-
-        return $this->redirectBasedOnRole($user);
-    }
-
     public function showLogin()
     {
         return view('auth.login');
@@ -47,12 +19,13 @@ class AuthController extends Controller
             'password' => 'required',
         ]);
 
-        if (!Auth::attempt($request->only('email', 'password'))) {
+        if (! Auth::attempt($request->only('email', 'password'))) {
             return back()->withErrors(['email' => 'Email atau password salah.']);
         }
 
         $request->session()->regenerate();
-        return $this->redirectBasedOnRole(auth()->user());
+
+        return redirect()->route('admin.dashboard');
     }
 
     public function logout(Request $request)
@@ -60,11 +33,7 @@ class AuthController extends Controller
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
-        return redirect()->route('login');
-    }
 
-    private function redirectBasedOnRole(User $user)
-    {
-        return redirect()->route($user->role === 'admin' ? 'admin.dashboard' : 'customer.vehicles.index');
+        return redirect()->route('login');
     }
 }

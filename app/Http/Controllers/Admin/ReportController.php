@@ -15,19 +15,20 @@ class ReportController extends Controller
         $month = $request->get('month', now()->month);
         $year  = $request->get('year', now()->year);
 
-        $bookings = Booking::with(['user', 'vehicle', 'services.service'])
+        $bookings = Booking::with(['vehicle', 'services.service'])
             ->whereMonth('scheduled_at', $month)
             ->whereYear('scheduled_at', $year)
             ->latest()
             ->get();
 
         $total       = $bookings->count();
-        $scheduled   = $bookings->where('status', 'scheduled')->count();
+        $pending     = $bookings->where('status', 'pending')->count();
+        $approved    = $bookings->where('status', 'approved')->count();
         $in_progress = $bookings->where('status', 'in_progress')->count();
         $done        = $bookings->where('status', 'done')->count();
         $cancelled   = $bookings->where('status', 'cancelled')->count();
 
-        return view('admin.reports.booking', compact('bookings', 'total', 'scheduled', 'in_progress', 'done', 'cancelled', 'month', 'year'));
+        return view('admin.reports.booking', compact('bookings', 'total', 'pending', 'approved', 'in_progress', 'done', 'cancelled', 'month', 'year'));
     }
 
     public function revenue(Request $request)

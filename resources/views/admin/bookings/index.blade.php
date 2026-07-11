@@ -4,14 +4,18 @@
         <h1 class="text-2xl font-bold text-heading">Bookings</h1>
     </div>
 
-    <div class="grid grid-cols-4 gap-6">
+    <div class="grid grid-cols-5 gap-6">
         <x-card class="flex flex-col gap-2">
             <p class="text-sm font-medium text-body-subtle">Total</p>
             <p class="text-3xl font-semibold text-fg-default">{{ $total }}</p>
         </x-card>
         <x-card class="flex flex-col gap-2">
-            <p class="text-sm font-medium text-body-subtle">Scheduled</p>
-            <p class="text-3xl font-semibold text-fg-default">{{ $scheduled }}</p>
+            <p class="text-sm font-medium text-body-subtle">Pending</p>
+            <p class="text-3xl font-semibold text-fg-default">{{ $pending }}</p>
+        </x-card>
+        <x-card class="flex flex-col gap-2">
+            <p class="text-sm font-medium text-body-subtle">Approved</p>
+            <p class="text-3xl font-semibold text-fg-default">{{ $approved }}</p>
         </x-card>
         <x-card class="flex flex-col gap-2">
             <p class="text-sm font-medium text-body-subtle">In Progress</p>
@@ -40,8 +44,8 @@
             @forelse($bookings as $booking)
                 <tr>
                     <x-table.cell>{{ $loop->iteration }}</x-table.cell>
-                    <x-table.cell>{{ $booking->user->name }}</x-table.cell>
-                    <x-table.cell>{{ $booking->vehicle->brand }} {{ $booking->vehicle->model }} - {{ $booking->vehicle->license_plate }}</x-table.cell>
+                    <x-table.cell>{{ $booking->customer_name }}</x-table.cell>
+                    <x-table.cell>{{ $booking->vehicle?->vehicle_model }} - {{ $booking->vehicle?->license_plate ?? '-' }}</x-table.cell>
                     <x-table.cell>
                         <div class="flex flex-wrap gap-1">
                             @foreach($booking->services as $bookingService)
@@ -53,10 +57,12 @@
                     <x-table.cell>
                         @php
                             $variants = [
-                                'scheduled'   => 'warning',
+                                'pending'     => 'warning',
+                                'approved'    => 'brand',
                                 'in_progress' => 'brand',
                                 'done'        => 'success',
-                                'cancelled'   => 'danger',
+                                'cancelled'   => 'gray',
+                                'rejected'    => 'danger',
                             ];
                         @endphp
                         <x-badge variant="{{ $variants[$booking->status] ?? 'gray' }}">

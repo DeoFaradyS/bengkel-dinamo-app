@@ -13,6 +13,7 @@ return new class extends Migration {
             $table->decimal('price_min', 10, 2);
             $table->decimal('price_max', 10, 2);
             $table->integer('estimated_time_minutes');
+            $table->boolean('available_home_service')->default(false);
             $table->boolean('is_active')->default(true);
             $table->timestamps();
         });

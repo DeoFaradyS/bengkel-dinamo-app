@@ -1,5 +1,10 @@
 <x-layouts.dashboard>
-    <div class="grid grid-cols-4 gap-y-4 gap-x-4">
+    <div class="grid grid-cols-5 gap-y-4 gap-x-4">
+
+        <x-card class="flex flex-col gap-2">
+            <p class="text-sm font-medium text-body-subtle">Pending Approval</p>
+            <p class="text-3xl font-semibold text-warning">{{ $pendingApproval }}</p>
+        </x-card>
 
         <x-card class="flex flex-col gap-2">
             <p class="text-sm font-medium text-body-subtle">Bookings Hari Ini</p>
@@ -98,15 +103,17 @@
             @foreach($recentBookings as $booking)
                 @php
                     $variants = [
-                        'scheduled'   => 'warning',
+                        'pending'     => 'warning',
+                        'approved'    => 'brand',
                         'in_progress' => 'brand',
                         'done'        => 'success',
-                        'cancelled'   => 'danger',
+                        'cancelled'   => 'gray',
+                        'rejected'    => 'danger',
                     ];
                 @endphp
                 <tr>
-                    <x-table.cell>{{ $booking->user->name }}</x-table.cell>
-                    <x-table.cell>{{ $booking->vehicle->brand }} {{ $booking->vehicle->model }}</x-table.cell>
+                    <x-table.cell>{{ $booking->customer_name }}</x-table.cell>
+                    <x-table.cell>{{ $booking->vehicle?->license_plate ?? '-' }} {{ $booking->vehicle?->vehicle_model }}</x-table.cell>
                     <x-table.cell>{{ $booking->scheduled_at->format('d M Y, H:i') }}</x-table.cell>
                     <x-table.cell>
                         <x-badge variant="{{ $variants[$booking->status] ?? 'gray' }}">

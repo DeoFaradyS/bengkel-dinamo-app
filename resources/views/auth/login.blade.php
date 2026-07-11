@@ -23,11 +23,6 @@
 
             </form>
 
-            <p class="text-sm font-reguler text-gray-500 text-center">
-                Don't have an account yet?
-                <a href="{{ route('register') }}" class="font-medium text-primary-600 hover:underline">Sign up</a>
-            </p>
-
         </x-card>
 
     </section>

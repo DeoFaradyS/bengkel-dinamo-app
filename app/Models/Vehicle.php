@@ -7,20 +7,13 @@ use Illuminate\Database\Eloquent\Model;
 class Vehicle extends Model
 {
     protected $fillable = [
-        'user_id',
         'license_plate',
-        'brand',
-        'model',
+        'vehicle_model',
         'year',
-        'is_active',
     ];
 
-    protected $casts = [
-        'is_active' => 'boolean',
-    ];
-
-    public function user()
+    public function bookings()
     {
-        return $this->belongsTo(User::class);
+        return $this->hasMany(Booking::class);
     }
 }

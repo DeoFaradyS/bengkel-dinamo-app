@@ -31,9 +31,10 @@
           <p class="text-neutral-500 text-base">Kami cek dulu sumber masalahnya sebelum kasih estimasi biaya servis.</p>
         </div>
 
-        <form class="grid grid-cols-2 gap-4" onsubmit="return false">
-          <input type="text" name="name" placeholder="Nama Anda" class="p-4 rounded-[10px] bg-neutral-100 col-span-2 lg:col-span-1" required>
-          <input type="tel" name="phone" placeholder="Nomor WhatsApp" class="p-4 rounded-[10px] bg-neutral-100 col-span-2 lg:col-span-1" required>
+        {{-- ponytail: form ini cuma teaser, submit ngarah ke /booking (form lengkap), bukan store langsung --}}
+        <form class="grid grid-cols-2 gap-4" action="{{ route('booking.create') }}" method="GET">
+          <input type="text" name="name" placeholder="Nama Anda" class="p-4 rounded-[10px] bg-neutral-100 col-span-2 lg:col-span-1">
+          <input type="tel" name="phone" placeholder="Nomor WhatsApp" class="p-4 rounded-[10px] bg-neutral-100 col-span-2 lg:col-span-1">
           <select name="service" class="p-4 rounded-[10px] bg-neutral-100 col-span-2 text-neutral-400">
             <option value="">Pilih jenis servis…</option>
             <option value="starter">Servis Dinamo Starter</option>
