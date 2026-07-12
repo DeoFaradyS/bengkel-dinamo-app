@@ -1,0 +1,5 @@
+[11-Jul-2026 21:57:09 Asia/Jakarta] PHP Warning:  require(/home/benp4461/repositories/bengkel-dinamo-app/vendor/autoload.php): Failed to open stream: No such file or directory in /home/benp4461/repositories/bengkel-dinamo-app/artisan on line 10
+[11-Jul-2026 21:57:09 Asia/Jakarta] PHP Fatal error:  Uncaught Error: Failed opening required '/home/benp4461/repositories/bengkel-dinamo-app/vendor/autoload.php' (include_path='.:/opt/alt/php83/usr/share/pear:/opt/alt/php83/usr/share/php:/usr/share/pear:/usr/share/php') in /home/benp4461/repositories/bengkel-dinamo-app/artisan:10
+Stack trace:
+#0 {main}
+  thrown in /home/benp4461/repositories/bengkel-dinamo-app/artisan on line 10
